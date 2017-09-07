@@ -1,7 +1,7 @@
 {
 	"name": "veams-plugin-modules",
-	"version": "1.0.0",
-	"description": "VeamsModules plugin.",
+	"version": "1.0.1",
+	"description": "The VeamsModules plugin provides a whole system to initialize, render, save and destroy your modules.",
 	"main": "lib/index.js",
 	"browserify": {
 		"transform": [
