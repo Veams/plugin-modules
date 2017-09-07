@@ -25,10 +25,23 @@ When enabled you can register a module like that:
 
 ```js
 import CustomModule from './modules/custom';
+import AnotherCustomModule from './modules/another-custom';
 
 Veams.modules.register([
-    domName: 'custom',
-    module: CustomModule
+	{
+	    domName: 'custom',
+	    module: CustomModule
+    },
+    {
+    	domName: 'another-custom',
+    	module: AnotherCustomModule,
+    	conditions: () => {
+        	return Veams.detections.width < 768;
+        },
+        conditionsListenOn: [
+        	Veams.EVENTS.resize
+        ]
+    }
 ]);
 ```
 
