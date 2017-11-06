@@ -199,6 +199,22 @@ class Modules {
 		this.registerAll();
 	}
 
+	add(namespace, module, optionsObj = {}) {
+		const currentModule = Object.assign({}, {
+			namespace,
+			module
+		}, optionsObj);
+
+		if (this.constructor.isCondition(currentModule)) {
+			if (currentModule.conditionsListenOn && currentModule.conditionsListenOn.length) {
+				this.bindCondition(currentModule);
+			}
+			this.registerConditionalModule(currentModule);
+		} else {
+			this.registerOne(currentModule);
+		}
+	}
+
 	/**
 	 * Register all modules
 	 */
@@ -253,8 +269,8 @@ class Modules {
 	registerOne({namespace, domName, module, render, cb, options}) {
 		let nameSpace = namespace ? namespace : domName;
 
-		if (!module) throw new Error('VeamsModules :: In order to work with register() you need to define a module!');
-		if (!nameSpace)throw new Error('VeamsModules :: In order to work with register() you need to define a module!');
+		if (!module) throw new Error('VeamsModules :: In order to work with register() or add() you need to define a module!');
+		if (!nameSpace)throw new Error('VeamsModules :: In order to work with register() or add() you need to define a module!');
 
 		this.initModules({
 			namespace: nameSpace,
