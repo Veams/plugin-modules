@@ -1,6 +1,8 @@
+### v1.0.3
+- Update "add" method to support object and string parameters and mutation observer caching mechanism as well.
+
 ### v1.0.2
 - Add "add" method to support `Veams.modules.add('test', TestComponent)`.
-
 
 ### v1.0.1
 - Update description

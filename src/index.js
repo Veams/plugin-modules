@@ -83,7 +83,7 @@ class Modules {
 	 * @param {Object} instance - module instance
 	 * @param {String} namespace - module namespace
 	 */
-	static addToCache({module, element, instance, namespace}) {
+	static addToCache({ module, element, instance, namespace }) {
 		__cache.push({
 			module,
 			element,
@@ -103,9 +103,9 @@ class Modules {
 		let deleteIndex;
 
 		for (let i = 0; i < __cache.length; i++) {
-			let cacheItem = __cache[i];
+			let cacheItem = __cache[ i ];
 
-			if (cacheItem[key] === obj) {
+			if (cacheItem[ key ] === obj) {
 				if (cacheItem.instance.willUnmount) cacheItem.instance.willUnmount();
 				if (cacheItem.instance.unregisterEvents) cacheItem.instance.unregisterEvents();
 				if (cacheItem.instance.didUnmount) cacheItem.instance.didUnmount();
@@ -121,9 +121,9 @@ class Modules {
 		let state = false;
 
 		for (let i = 0; i < __cache.length; i++) {
-			let cacheItem = __cache[i];
+			let cacheItem = __cache[ i ];
 
-			state = (namespace !== undefined) ? cacheItem[key] === obj && cacheItem.namespace === namespace : cacheItem[key] === obj;
+			state = (namespace !== undefined) ? cacheItem[ key ] === obj && cacheItem.namespace === namespace : cacheItem[ key ] === obj;
 
 			if (state) break;
 		}
@@ -135,11 +135,11 @@ class Modules {
 	// CONDITIONS HANDLER
 	// ------------------------
 
-	static isCondition({conditions}) {
+	static isCondition({ conditions }) {
 		return conditions && typeof conditions === 'function';
 	}
 
-	static makeConditionCheck({conditions}) {
+	static makeConditionCheck({ conditions }) {
 		if (conditions && typeof conditions === 'function') {
 			return conditions();
 		}
@@ -199,11 +199,35 @@ class Modules {
 		this.registerAll();
 	}
 
-	add(namespace, module, optionsObj = {}) {
-		const currentModule = Object.assign({}, {
-			namespace,
-			module
-		}, optionsObj);
+	add(...module) {
+		const args = [ ...module ];
+		let currentModule = args[ 0 ];
+
+		if (args.length === 1 && typeof args[ 0 ] !== 'object') {
+			console.error(
+				`Veams Modules :: You have to provide an object to add a new module! Received "${args[ 0 ]}"`
+			);
+			return;
+		}
+
+		if (args.length > 1) {
+			console.info('Veams Modules :: Please use an object as parameter. ' +
+				'The initialisation with string parameters is deprecated and will be removed in the upcoming release!');
+
+			currentModule = {
+				namespace: args[ 0 ],
+				module: args[ 1 ],
+				options: args[ 2 ] || {},
+				render: args[ 3 ] || false
+			};
+		}
+
+		if (args.length > 4) {
+			console.error('Veams Modules :: Please use an object as parameter!');
+			return;
+		}
+
+		__register.modulesInRegister.push(currentModule);
 
 		if (this.constructor.isCondition(currentModule)) {
 			if (currentModule.conditionsListenOn && currentModule.conditionsListenOn.length) {
@@ -266,7 +290,7 @@ class Modules {
 	 * @param {Object} [options] - Optional: You can pass options to the module via JS (Useful for DOMChanged)
 	 *
 	 */
-	registerOne({namespace, domName, module, render, cb, options}) {
+	registerOne({ namespace, domName, module, render, cb, options }) {
 		let nameSpace = namespace ? namespace : domName;
 
 		if (!module) throw new Error('VeamsModules :: In order to work with register() or add() you need to define a module!');
@@ -281,7 +305,7 @@ class Modules {
 		});
 	}
 
-	unregisterOne({namespace}) {
+	unregisterOne({ namespace }) {
 		if (this.constructor.checkModuleInCache(namespace, 'namespace') === true) {
 			this.constructor.removeFromCacheByKey(namespace, 'namespace');
 		}
@@ -301,7 +325,7 @@ class Modules {
 	 * @param {function} [cb] - Optional: provide a function which will be executed after initialisation
 	 *
 	 */
-	initModules({namespace, module, render, options, cb}) {
+	initModules({ namespace, module, render, options, cb }) {
 		Veams.helpers.forEach(__register.modulesInContext, (i, el) => {
 			this.initModule({
 				el,
@@ -314,7 +338,7 @@ class Modules {
 		});
 	}
 
-	initModule({el, namespace, options, module, render, cb}) {
+	initModule({ el, namespace, options, module, render, cb }) {
 		let noRender = el.getAttribute(`${this.options.attrPrefix}-no-render`) || render === false || false;
 		let dataModules = el.getAttribute(`${this.options.attrPrefix}-${this.options.attrName}`).split(' ');
 
@@ -371,8 +395,8 @@ class Modules {
 			for (let i = 0; i < mutations.length; ++i) {
 				// look through all added nodes of this mutation
 
-				for (let j = 0; j < mutations[i].addedNodes.length; ++j) {
-					let addedNode = mutations[i].addedNodes[j];
+				for (let j = 0; j < mutations[ i ].addedNodes.length; ++j) {
+					let addedNode = mutations[ i ].addedNodes[ j ];
 
 					if (addedNode instanceof HTMLElement) {
 						if (addedNode.getAttribute(`${this.options.attrPrefix}-${this.options.attrName}`)) {
@@ -409,8 +433,8 @@ class Modules {
 					}
 				}
 
-				for (let j = 0; j < mutations[i].removedNodes.length; ++j) {
-					let removedNode = mutations[i].removedNodes[j];
+				for (let j = 0; j < mutations[ i ].removedNodes.length; ++j) {
+					let removedNode = mutations[ i ].removedNodes[ j ];
 
 					if (removedNode instanceof HTMLElement) {
 						if (removedNode.getAttribute(`${this.options.attrPrefix}-${this.options.attrName}`)) {
