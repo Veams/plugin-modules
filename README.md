@@ -8,7 +8,7 @@ __How to__
 
 ```js
 import Veams from 'veams';
-import VeamsModules from 'veams/lib/plugins/modules';
+import VeamsModules from 'veams-plugin-modules';
 
 // Intialize core of Veams
 Veams.onInitialize(() => {
