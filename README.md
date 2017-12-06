@@ -11,11 +11,11 @@ import Veams from 'veams';
 import VeamsModules from 'veams/lib/plugins/modules';
 
 // Intialize core of Veams
-Veams.initialize();
-
-// Add plugins to the Veams system
-Veams.use(VeamsModules, {
-    useMutationObserver: true
+Veams.onInitialize(() => {
+   	// Add plugins to the Veams system
+	Veams.use(VeamsModules, {
+	    useMutationObserver: true
+	});
 });
 ```
 
@@ -29,18 +29,18 @@ import AnotherCustomModule from './modules/another-custom';
 
 Veams.modules.register([
 	{
-	    domName: 'custom',
-	    module: CustomModule
-    },
-    {
-    	domName: 'another-custom',
-    	module: AnotherCustomModule,
-    	conditions: () => {
-        	return Veams.detections.width < 768;
-        },
-        conditionsListenOn: [
-        	Veams.EVENTS.resize
-        ]
+		namespace: 'custom',
+		module: CustomModule
+    	},
+    	{
+    		namespace: 'another-custom',
+    		module: AnotherCustomModule,
+    		conditions: () => {
+        		return Veams.detections.width < 768;
+        	},
+        	conditionsListenOn: [
+        		Veams.EVENTS.resize
+        	]
     }
 ]);
 ```
