@@ -487,7 +487,6 @@ class Modules {
  */
 const VeamsModules = {
 	options: {
-		DEBUG: false,
 		attrPrefix: 'data-js',
 		attrName: 'module',
 		attrOptions: 'options',
