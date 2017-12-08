@@ -218,7 +218,7 @@ class Modules {
 				namespace: args[ 0 ],
 				module: args[ 1 ],
 				options: args[ 2 ] || {},
-				render: args[ 3 ] || false
+				render: args[ 3 ] || true
 			};
 		}
 

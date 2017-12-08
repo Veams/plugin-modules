@@ -1,3 +1,6 @@
+### v1.0.4
+- Change render method in `add()`.
+
 ### v1.0.3
 - Update "add" method to support object and string parameters and mutation observer caching mechanism as well.
 
