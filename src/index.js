@@ -172,12 +172,19 @@ class Modules {
 	 */
 	splitUpModules() {
 		__register.modulesInRegister.forEach((obj) => {
-			if (this.constructor.isCondition(obj)) {
-				__register.modulesOnConditions.push(obj);
-			} else {
-				__register.modulesOnInit.push(obj);
-			}
+			this.addModuleToCache(obj);
 		});
+	}
+
+	/**
+	 * Add module to cache
+	 */
+	addModuleToCache(obj) {
+		if (this.constructor.isCondition(obj)) {
+			__register.modulesOnConditions.push(obj);
+		} else {
+			__register.modulesOnInit.push(obj);
+		}
 	}
 
 	/**
@@ -237,6 +244,8 @@ class Modules {
 		} else {
 			this.registerOne(currentModule);
 		}
+
+		this.addModuleToCache(currentModule);
 	}
 
 	/**
@@ -419,6 +428,7 @@ class Modules {
 							}
 						}
 
+						console.log('modules in context: ', this.getModulesInContext(addedNode).length);
 						if (this.getModulesInContext(addedNode).length) {
 							__register.modulesInContext = this.getModulesInContext(addedNode);
 
