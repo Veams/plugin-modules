@@ -428,7 +428,6 @@ class Modules {
 							}
 						}
 
-						console.log('modules in context: ', this.getModulesInContext(addedNode).length);
 						if (this.getModulesInContext(addedNode).length) {
 							__register.modulesInContext = this.getModulesInContext(addedNode);
 
