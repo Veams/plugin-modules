@@ -45,24 +45,26 @@ export interface PluginOptions {
 	useMutationObserver?: boolean
 }
 
+export interface Module {
+	namespace: string,
+	module: any,
+	options?: object,
+	render?: boolean,
+	cb?: any
+}
+
 /**
  * Module Class
  */
 class Modules {
-	/**
-	 * Options
-	 */
+	// Options
 	options: PluginOptions;
 
-	/**
-	 * Private Props
-	 */
-	private _cache: Array<object>;
-	private _register: Object;
+	// Private Props
+	private _cache: object[];
+	private _register: object;
 
-	/**
-	 * Generic elements
-	 */
+	//Generic Elements
 	queryString = `[${this.options.attrPrefix}-${this.options.attrName}]`;
 
 	/**
@@ -84,7 +86,7 @@ class Modules {
 		this.initialize();
 	}
 
-	initialize() {
+	initialize(): void {
 		__register.modulesInContext = querySelectorArray(this.queryString);
 
 		if (this.options.useMutationObserver) {
@@ -94,7 +96,7 @@ class Modules {
 		this.bindEvents();
 	}
 
-	bindEvents() {
+	bindEvents(): void {
 		if (!Veams.Vent && this.options.useMutationObserver === false) {
 			console.info('VeamsModules :: In order to work with the the ajax handling in VeamsModulesHandler ' +
 				'you need to define "useMutationObserver" or use the VeamsVent plugin!');
@@ -189,7 +191,7 @@ class Modules {
 		}
 	}
 
-	bindConditions() {
+	bindConditions(): void {
 		__register.modulesOnConditions.forEach((module) => {
 			if (module.conditionsListenOn && module.conditionsListenOn.length) {
 				this.bindCondition(module);
@@ -197,7 +199,7 @@ class Modules {
 		});
 	}
 
-	bindCondition(module) {
+	bindCondition(module): void {
 		let globalEvts = module.conditionsListenOn.join(' ');
 
 		if (Veams.Vent) {
@@ -214,7 +216,7 @@ class Modules {
 	/**
 	 * Split up modules depending on condition check
 	 */
-	splitUpModules() {
+	splitUpModules(): void {
 		__register.modulesInRegister.forEach((obj) => {
 			this.addModuleToCache(obj);
 		});
@@ -223,7 +225,7 @@ class Modules {
 	/**
 	 * Add module to cache
 	 */
-	addModuleToCache(obj) {
+	addModuleToCache(obj): void {
 		if (Modules.isCondition(obj)) {
 			__register.modulesOnConditions.push(obj);
 		} else {
@@ -238,7 +240,7 @@ class Modules {
 	 *
 	 * @public
 	 */
-	register(arr: Array<object>) {
+	register(arr: Module[]): void {
 		if (!Array.isArray(arr)) {
 			throw new Error('VeamsModules :: You need to pass an array to register()!');
 		}
@@ -250,7 +252,7 @@ class Modules {
 		this.registerAll();
 	}
 
-	add(...module) {
+	add(...module): void {
 		const args = [...module];
 		let currentModule = args[0];
 
@@ -265,7 +267,7 @@ class Modules {
 			console.info('Veams Modules :: Please use an object as parameter. ' +
 				'The initialisation with string parameters is deprecated and will be removed in the upcoming release!');
 
-			currentModule = {
+			currentModule = <Module>{
 				namespace: args[0],
 				module: args[1],
 				options: args[2] || {},
@@ -295,7 +297,7 @@ class Modules {
 	/**
 	 * Register all modules
 	 */
-	registerAll() {
+	registerAll(): void {
 		if (!__register.modulesInRegister) return;
 
 		this.registerInitialModules();
@@ -305,7 +307,7 @@ class Modules {
 	/**
 	 * Register all initial modules
 	 */
-	registerInitialModules() {
+	registerInitialModules(): void {
 		__register.modulesOnInit.forEach((obj) => {
 			this.registerOne(obj);
 		});
@@ -318,13 +320,13 @@ class Modules {
 	 * when true register the specific module
 	 * when false unregister the specific module
 	 */
-	registerConditionalModules() {
+	registerConditionalModules(): void {
 		__register.modulesOnConditions.forEach((obj) => {
 			this.registerConditionalModule(obj);
 		});
 	}
 
-	registerConditionalModule(obj) {
+	registerConditionalModule(obj): void {
 		if (Modules.makeConditionCheck(obj)) {
 			this.registerOne(obj);
 		} else {
@@ -349,7 +351,7 @@ class Modules {
 		if (!module) throw new Error('VeamsModules :: In order to work with register() or add() you need to define a module!');
 		if (!nameSpace) throw new Error('VeamsModules :: In order to work with register() or add() you need to define a module!');
 
-		this.initModules({
+		this.initModules(<Module>{
 			namespace: nameSpace,
 			module,
 			render,
@@ -378,7 +380,7 @@ class Modules {
 	 * @param {function} [cb] - Optional: provide a function which will be executed after initialisation
 	 *
 	 */
-	initModules({namespace, module, render = true, options = {}, cb = null}): void {
+	initModules({namespace, module, render = true, options = {}, cb = null}: Module): void {
 		forEach(__register.modulesInContext, (i, el) => {
 			this.initModule({
 				el,
@@ -442,7 +444,7 @@ class Modules {
 	 *
 	 * TODO: Improve for loops
 	 */
-	observe(context) {
+	observe(context): void {
 		let observer = new MutationObserver((mutations) => {
 			// look through all mutations that just occured
 			for (let i = 0; i < mutations.length; ++i) {
@@ -530,7 +532,7 @@ class Modules {
 	 *
 	 * @param {Object} context - Context for query specific string
 	 */
-	getModulesInContext(context): Array<any> {
+	getModulesInContext(context): any[] {
 		return querySelectorArray(this.queryString, context);
 	}
 }
@@ -548,7 +550,7 @@ const VeamsModules = {
 		internalRegisterOnly: false,
 		useMutationObserver: false
 	},
-	pluginName: <String>'ModulesHandler',
+	pluginName: <string>'ModulesHandler',
 	initialize: function (Veams, opts: PluginOptions = {}) {
 		this.options = extend(this.options, opts);
 		Veams.modules = Veams.modules || new Modules(Veams, this.options);
