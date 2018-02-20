@@ -1,3 +1,6 @@
+### v1.0.7
+- Refactor in typescript.
+
 ### v1.0.6
 - Delete unnecessary logs.
  

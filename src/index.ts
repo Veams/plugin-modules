@@ -1,6 +1,16 @@
 'use strict';
 
-let Veams = {};
+/**
+ * Imports
+ */
+import querySelectorArray from "@veams/helpers/lib/browser/query-selector-array";
+import extend from "@veams/helpers/lib/object/extend";
+import forEach from "@veams/helpers/lib/array/for-each";
+
+/**
+ * Lokal vars
+ */
+let Veams: any = {};
 let __cache = [];
 let __register = {
 	modulesInRegister: [],
@@ -22,8 +32,43 @@ let __register = {
  * -
  */
 
+/**
+ * Interface
+ */
+export interface PluginOptions {
+	attrPrefix?: string,
+	attrName?: string,
+	attrOptions?: string,
+	logs?: boolean,
+	internalCacheOnly?: boolean,
+	internalRegisterOnly?: boolean,
+	useMutationObserver?: boolean
+}
+
+/**
+ * Module Class
+ */
 class Modules {
-	constructor(VEAMS = window.Veams, opts) {
+	/**
+	 * Options
+	 */
+	options: PluginOptions;
+
+	/**
+	 * Private Props
+	 */
+	private _cache: Array<object>;
+	private _register: Object;
+
+	/**
+	 * Generic elements
+	 */
+	queryString = `[${this.options.attrPrefix}-${this.options.attrName}]`;
+
+	/**
+	 * Constructor
+	 */
+	constructor(VEAMS = window['Veams'], opts) {
 		Veams = VEAMS;
 
 		this.options = opts;
@@ -40,8 +85,7 @@ class Modules {
 	}
 
 	initialize() {
-		this.queryString = `[${this.options.attrPrefix}-${this.options.attrName}]`;
-		__register.modulesInContext = Veams.helpers.querySelectorArray(this.queryString);
+		__register.modulesInContext = querySelectorArray(this.queryString);
 
 		if (this.options.useMutationObserver) {
 			this.observe(document.body);
@@ -83,7 +127,7 @@ class Modules {
 	 * @param {Object} instance - module instance
 	 * @param {String} namespace - module namespace
 	 */
-	static addToCache({ module, element, instance, namespace }) {
+	static addToCache({module, element, instance, namespace}) {
 		__cache.push({
 			module,
 			element,
@@ -103,9 +147,9 @@ class Modules {
 		let deleteIndex;
 
 		for (let i = 0; i < __cache.length; i++) {
-			let cacheItem = __cache[ i ];
+			let cacheItem = __cache[i];
 
-			if (cacheItem[ key ] === obj) {
+			if (cacheItem[key] === obj) {
 				if (cacheItem.instance.willUnmount) cacheItem.instance.willUnmount();
 				if (cacheItem.instance.unregisterEvents) cacheItem.instance.unregisterEvents();
 				if (cacheItem.instance.didUnmount) cacheItem.instance.didUnmount();
@@ -121,9 +165,9 @@ class Modules {
 		let state = false;
 
 		for (let i = 0; i < __cache.length; i++) {
-			let cacheItem = __cache[ i ];
+			let cacheItem = __cache[i];
 
-			state = (namespace !== undefined) ? cacheItem[ key ] === obj && cacheItem.namespace === namespace : cacheItem[ key ] === obj;
+			state = (namespace !== undefined) ? cacheItem[key] === obj && cacheItem.namespace === namespace : cacheItem[key] === obj;
 
 			if (state) break;
 		}
@@ -135,11 +179,11 @@ class Modules {
 	// CONDITIONS HANDLER
 	// ------------------------
 
-	static isCondition({ conditions }) {
+	static isCondition({conditions}): boolean {
 		return conditions && typeof conditions === 'function';
 	}
 
-	static makeConditionCheck({ conditions }) {
+	static makeConditionCheck({conditions}): boolean {
 		if (conditions && typeof conditions === 'function') {
 			return conditions();
 		}
@@ -180,7 +224,7 @@ class Modules {
 	 * Add module to cache
 	 */
 	addModuleToCache(obj) {
-		if (this.constructor.isCondition(obj)) {
+		if (Modules.isCondition(obj)) {
 			__register.modulesOnConditions.push(obj);
 		} else {
 			__register.modulesOnInit.push(obj);
@@ -194,7 +238,7 @@ class Modules {
 	 *
 	 * @public
 	 */
-	register(arr) {
+	register(arr: Array<object>) {
 		if (!Array.isArray(arr)) {
 			throw new Error('VeamsModules :: You need to pass an array to register()!');
 		}
@@ -207,12 +251,12 @@ class Modules {
 	}
 
 	add(...module) {
-		const args = [ ...module ];
-		let currentModule = args[ 0 ];
+		const args = [...module];
+		let currentModule = args[0];
 
-		if (args.length === 1 && typeof args[ 0 ] !== 'object') {
+		if (args.length === 1 && typeof args[0] !== 'object') {
 			console.error(
-				`Veams Modules :: You have to provide an object to add a new module! Received "${args[ 0 ]}"`
+				`Veams Modules :: You have to provide an object to add a new module! Received "${args[0]}"`
 			);
 			return;
 		}
@@ -222,10 +266,10 @@ class Modules {
 				'The initialisation with string parameters is deprecated and will be removed in the upcoming release!');
 
 			currentModule = {
-				namespace: args[ 0 ],
-				module: args[ 1 ],
-				options: args[ 2 ] || {},
-				render: args[ 3 ] || true
+				namespace: args[0],
+				module: args[1],
+				options: args[2] || {},
+				render: args[3] || true
 			};
 		}
 
@@ -236,7 +280,7 @@ class Modules {
 
 		__register.modulesInRegister.push(currentModule);
 
-		if (this.constructor.isCondition(currentModule)) {
+		if (Modules.isCondition(currentModule)) {
 			if (currentModule.conditionsListenOn && currentModule.conditionsListenOn.length) {
 				this.bindCondition(currentModule);
 			}
@@ -281,7 +325,7 @@ class Modules {
 	}
 
 	registerConditionalModule(obj) {
-		if (this.constructor.makeConditionCheck(obj)) {
+		if (Modules.makeConditionCheck(obj)) {
 			this.registerOne(obj);
 		} else {
 			this.unregisterOne(obj);
@@ -299,11 +343,11 @@ class Modules {
 	 * @param {Object} [options] - Optional: You can pass options to the module via JS (Useful for DOMChanged)
 	 *
 	 */
-	registerOne({ namespace, domName, module, render, cb, options }) {
+	registerOne({namespace, domName, module, render, cb, options}): void {
 		let nameSpace = namespace ? namespace : domName;
 
 		if (!module) throw new Error('VeamsModules :: In order to work with register() or add() you need to define a module!');
-		if (!nameSpace)throw new Error('VeamsModules :: In order to work with register() or add() you need to define a module!');
+		if (!nameSpace) throw new Error('VeamsModules :: In order to work with register() or add() you need to define a module!');
 
 		this.initModules({
 			namespace: nameSpace,
@@ -314,9 +358,9 @@ class Modules {
 		});
 	}
 
-	unregisterOne({ namespace }) {
-		if (this.constructor.checkModuleInCache(namespace, 'namespace') === true) {
-			this.constructor.removeFromCacheByKey(namespace, 'namespace');
+	unregisterOne({namespace}): void {
+		if (Modules.checkModuleInCache(namespace, 'namespace') === true) {
+			Modules.removeFromCacheByKey(namespace, 'namespace');
 		}
 	}
 
@@ -334,8 +378,8 @@ class Modules {
 	 * @param {function} [cb] - Optional: provide a function which will be executed after initialisation
 	 *
 	 */
-	initModules({ namespace, module, render, options, cb }) {
-		Veams.helpers.forEach(__register.modulesInContext, (i, el) => {
+	initModules({namespace, module, render = true, options = {}, cb = null}): void {
+		forEach(__register.modulesInContext, (i, el) => {
 			this.initModule({
 				el,
 				namespace,
@@ -347,13 +391,13 @@ class Modules {
 		});
 	}
 
-	initModule({ el, namespace, options, module, render, cb }) {
+	initModule({el, namespace, options = {}, module, render = true, cb = null}): void {
 		let noRender = el.getAttribute(`${this.options.attrPrefix}-no-render`) || render === false || false;
 		let dataModules = el.getAttribute(`${this.options.attrPrefix}-${this.options.attrName}`).split(' ');
 
 		if (dataModules.indexOf(namespace) !== -1) {
 			// Check init state
-			if (this.constructor.checkModuleInCache(el, 'element', namespace) === true) {
+			if (Modules.checkModuleInCache(el, 'element', namespace) === true) {
 				console.info('VeamsModules :: Element is already in cache and initialized: ');
 				console.log(el);
 				return;
@@ -361,7 +405,7 @@ class Modules {
 
 			// Go ahead when condition is true
 			let attrs = el.getAttribute(`${this.options.attrPrefix}-${this.options.attrOptions}`);
-			let mergedOptions = Veams.helpers.extend(JSON.parse(attrs), options || {});
+			let mergedOptions = extend(JSON.parse(attrs), options);
 			let Module = module;
 			let instance = new Module({
 				el,
@@ -370,7 +414,7 @@ class Modules {
 				appInstance: Veams
 			});
 
-			this.constructor.addToCache({
+			Modules.addToCache({
 				element: el,
 				module,
 				instance,
@@ -404,8 +448,8 @@ class Modules {
 			for (let i = 0; i < mutations.length; ++i) {
 				// look through all added nodes of this mutation
 
-				for (let j = 0; j < mutations[ i ].addedNodes.length; ++j) {
-					let addedNode = mutations[ i ].addedNodes[ j ];
+				for (let j = 0; j < mutations[i].addedNodes.length; ++j) {
+					let addedNode = mutations[i].addedNodes[j];
 
 					if (addedNode instanceof HTMLElement) {
 						if (addedNode.getAttribute(`${this.options.attrPrefix}-${this.options.attrName}`)) {
@@ -415,12 +459,12 @@ class Modules {
 								console.info(`VeamsModules :: Recording a new module with the namespace ${namespace} at: `, addedNode);
 							}
 
-							for (let module of __register.modulesInRegister) {
-								if (module.namespace === namespace) {
+							for (let moduleInstance of __register.modulesInRegister) {
+								if (moduleInstance.namespace === namespace) {
 									this.initModule({
 										el: addedNode,
-										module: module.module,
-										namespace: module.namespace
+										module: moduleInstance.module,
+										namespace: moduleInstance.namespace
 									});
 
 									break;
@@ -442,8 +486,8 @@ class Modules {
 					}
 				}
 
-				for (let j = 0; j < mutations[ i ].removedNodes.length; ++j) {
-					let removedNode = mutations[ i ].removedNodes[ j ];
+				for (let j = 0; j < mutations[i].removedNodes.length; ++j) {
+					let removedNode = mutations[i].removedNodes[j];
 
 					if (removedNode instanceof HTMLElement) {
 						if (removedNode.getAttribute(`${this.options.attrPrefix}-${this.options.attrName}`)) {
@@ -452,7 +496,7 @@ class Modules {
 								console.info('VeamsModules :: Recording deletion of module: ', removedNode);
 							}
 
-							this.constructor.removeFromCacheByKey(removedNode);
+							Modules.removeFromCacheByKey(removedNode);
 
 							__register.modulesInContext = this.getModulesInContext(document);
 						}
@@ -465,7 +509,7 @@ class Modules {
 							}
 
 							__register.modulesInContext.forEach((node) => {
-								this.constructor.removeFromCacheByKey(node);
+								Modules.removeFromCacheByKey(node);
 							});
 
 							__register.modulesInContext = this.getModulesInContext(document);
@@ -486,16 +530,16 @@ class Modules {
 	 *
 	 * @param {Object} context - Context for query specific string
 	 */
-	getModulesInContext(context) {
-		return Veams.helpers.querySelectorArray(this.queryString, context);
+	getModulesInContext(context): Array<any> {
+		return querySelectorArray(this.queryString, context);
 	}
 }
 
 /**
- * Plugin object
+ * Plugin Object
  */
 const VeamsModules = {
-	options: {
+	options: <PluginOptions>{
 		attrPrefix: 'data-js',
 		attrName: 'module',
 		attrOptions: 'options',
@@ -504,9 +548,9 @@ const VeamsModules = {
 		internalRegisterOnly: false,
 		useMutationObserver: false
 	},
-	pluginName: 'ModulesHandler',
-	initialize: function (Veams, opts) {
-		this.options = Veams.helpers.extend(this.options, opts || {});
+	pluginName: <String>'ModulesHandler',
+	initialize: function (Veams, opts: PluginOptions = {}) {
+		this.options = extend(this.options, opts);
 		Veams.modules = Veams.modules || new Modules(Veams, this.options);
 	}
 };
