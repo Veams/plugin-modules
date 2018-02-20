@@ -548,7 +548,7 @@ const VeamsModules = {
 		logs: false,
 		internalCacheOnly: true,
 		internalRegisterOnly: false,
-		useMutationObserver: false
+		useMutationObserver: true
 	},
 	pluginName: <string>'ModulesHandler',
 	initialize: function (Veams, opts: PluginOptions = {}) {
