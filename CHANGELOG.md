@@ -1,3 +1,6 @@
+### v1.1.0
+-  Change `appInstance` to `context`.
+
 ### v1.0.7
 - Refactor in typescript.
 

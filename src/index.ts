@@ -99,7 +99,7 @@ class Modules {
 
 	bindEvents(): void {
 		if (!Veams.Vent && this.options.useMutationObserver === false) {
-			console.info('VeamsModules :: In order to work with the the ajax handling in VeamsModulesHandler ' +
+			console.info('@veams/plugin-modules :: In order to work with the the ajax handling in VeamsModulesHandler ' +
 				'you need to define "useMutationObserver" or use the VeamsVent plugin!');
 
 			return;
@@ -110,7 +110,7 @@ class Modules {
 				__register.modulesInContext = this.getModulesInContext(context);
 
 				if (this.options.logs) {
-					console.info('VeamsModules :: Recording new context. When available new modules will be initialised in: ', context);
+					console.info('@veams/plugin-modules :: Recording new context. When available new modules will be initialised in: ', context);
 				}
 
 				this.registerAll();
@@ -243,7 +243,7 @@ class Modules {
 	 */
 	register(arr: Module[]): void {
 		if (!Array.isArray(arr)) {
-			throw new Error('VeamsModules :: You need to pass an array to register()!');
+			throw new Error('@veams/plugin-modules :: You need to pass an array to register()!');
 		}
 
 		__register.modulesInRegister = __register.modulesInRegister.concat(arr);
@@ -259,13 +259,13 @@ class Modules {
 
 		if (args.length === 1 && typeof args[0] !== 'object') {
 			console.error(
-				`Veams Modules :: You have to provide an object to add a new module! Received "${args[0]}"`
+				`@veams/plugin-modules :: You have to provide an object to add a new module! Received "${args[0]}"`
 			);
 			return;
 		}
 
 		if (args.length > 1) {
-			console.info('Veams Modules :: Please use an object as parameter. ' +
+			console.info('@veams/plugin-modules :: Please use an object as parameter. ' +
 				'The initialisation with string parameters is deprecated and will be removed in the upcoming release!');
 
 			currentModule = <Module>{
@@ -277,7 +277,7 @@ class Modules {
 		}
 
 		if (args.length > 4) {
-			console.error('Veams Modules :: Please use an object as parameter!');
+			console.error('@veams/plugin-modules :: Please use an object as parameter!');
 			return;
 		}
 
@@ -349,8 +349,8 @@ class Modules {
 	registerOne({namespace, domName, module, render, cb, options}): void {
 		let nameSpace = namespace ? namespace : domName;
 
-		if (!module) throw new Error('VeamsModules :: In order to work with register() or add() you need to define a module!');
-		if (!nameSpace) throw new Error('VeamsModules :: In order to work with register() or add() you need to define a module!');
+		if (!module) throw new Error('@veams/plugin-modules :: In order to work with register() or add() you need to define a module!');
+		if (!nameSpace) throw new Error('@veams/plugin-modules :: In order to work with register() or add() you need to define a module!');
 
 		this.initModules(<Module>{
 			namespace: nameSpace,
@@ -401,7 +401,7 @@ class Modules {
 		if (dataModules.indexOf(namespace) !== -1) {
 			// Check init state
 			if (Modules.checkModuleInCache(el, 'element', namespace) === true) {
-				console.info('VeamsModules :: Element is already in cache and initialized: ');
+				console.info('@veams/plugin-modules :: Element is already in cache and initialized: ');
 				console.log(el);
 				return;
 			}
@@ -414,7 +414,7 @@ class Modules {
 				el,
 				namespace,
 				options: mergedOptions,
-				appInstance: Veams
+				context: Veams
 			});
 
 			Modules.addToCache({
@@ -459,7 +459,7 @@ class Modules {
 							let namespace = addedNode.getAttribute(`${this.options.attrPrefix}-${this.options.attrName}`);
 
 							if (this.options.logs) {
-								console.info(`VeamsModules :: Recording a new module with the namespace ${namespace} at: `, addedNode);
+								console.info(`@veams/plugin-modules :: Recording a new module with the namespace ${namespace} at: `, addedNode);
 							}
 
 							for (let moduleInstance of __register.modulesInRegister) {
@@ -479,7 +479,7 @@ class Modules {
 							__register.modulesInContext = this.getModulesInContext(addedNode);
 
 							if (this.options.logs) {
-								console.info('VeamsModules :: Recording new context. When available new modules will be initialised in: ', addedNode);
+								console.info('@veams/plugin-modules :: Recording new context. When available new modules will be initialised in: ', addedNode);
 							}
 
 							this.registerAll();
@@ -496,7 +496,7 @@ class Modules {
 						if (removedNode.getAttribute(`${this.options.attrPrefix}-${this.options.attrName}`)) {
 
 							if (this.options.logs) {
-								console.info('VeamsModules :: Recording deletion of module: ', removedNode);
+								console.info('@veams/plugin-modules :: Recording deletion of module: ', removedNode);
 							}
 
 							Modules.removeFromCacheByKey(removedNode);
@@ -508,7 +508,7 @@ class Modules {
 							__register.modulesInContext = this.getModulesInContext(removedNode);
 
 							if (this.options.logs) {
-								console.info('VeamsModules :: Recording deletion of DOM element. When available modules will be unbound in ', removedNode);
+								console.info('@veams/plugin-modules :: Recording deletion of DOM element. When available modules will be unbound in ', removedNode);
 							}
 
 							__register.modulesInContext.forEach((node) => {

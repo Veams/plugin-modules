@@ -22,7 +22,7 @@ yarn add @veams/plugin-modules
 
 ## Usage
 
-```js
+``` js
 import Veams from '@veams/core';
 import VeamsModules from '@veams/plugin-modules';
 
@@ -49,7 +49,7 @@ Veams.onInitialize(() => {
 
 When enabled you can register a module/component like that:
 
-```js
+``` js
 import CustomModule from './modules/custom';
 import AnotherCustomModule from './modules/another-custom';
 import ThirdCustomComponent from './components/third-custom';
@@ -79,3 +79,14 @@ Veams.modules.add({
 	module: ThirdCustomComponent
 })
 ```
+
+### Parameters provided by Plugin
+
+The plugin initializes your module and provides parameters to it: 
+
+1. `obj` - Generic Object which contains
+    - `el` - Node/element which is found by the plugin.
+    - `namespace` - Namespace which is associated with the module. 
+    - `options` - Options object which is defined in the register process (also called default module options).
+    - `context` - The context object is your custom Veams object.
+2. `options` - Markup Options which are read out by this plugin
