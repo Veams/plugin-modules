@@ -65,7 +65,7 @@ class Modules {
 	private _register: object;
 
 	//Generic Elements
-	queryString = `[${this.options.attrPrefix}-${this.options.attrName}]`;
+	queryString: string;
 
 	/**
 	 * Constructor
@@ -87,6 +87,7 @@ class Modules {
 	}
 
 	initialize(): void {
+		this.queryString = `[${this.options.attrPrefix}-${this.options.attrName}]`;
 		__register.modulesInContext = querySelectorArray(this.queryString);
 
 		if (this.options.useMutationObserver) {
