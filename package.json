@@ -1,6 +1,6 @@
 {
 	"name": "@veams/plugin-modules",
-	"version": "1.0.6",
+	"version": "1.0.7",
 	"description": "The VeamsModules plugin provides a whole system to initialize, render, save and destroy your modules.",
 	"main": "./lib/index.js",
 	"types": "./lib/index.d.ts",
