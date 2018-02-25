@@ -417,6 +417,13 @@ class Modules {
 				context: Veams
 			});
 
+			// Mount process
+			if (instance.willMount) instance.willMount();
+
+			// Bind global and local events, execute pre-render method
+			if (instance.create) instance.create();
+
+			// Add module to internal cache
 			Modules.addToCache({
 				element: el,
 				module,
@@ -425,16 +432,13 @@ class Modules {
 			});
 
 			// Mount process
-			if (instance.willMount) instance.willMount();
-
-			// Render after initial module loading
-			if (!noRender) instance.render();
+			if (instance.didMount) instance.didMount();
 
 			// Provide callback function in which you can use module and options
 			if (cb && typeof (cb) === 'function') cb(module, mergedOptions);
 
-			// Mount process
-			if (instance.didMount) instance.didMount();
+			// Render after initial module loading
+			if (!noRender) instance.render();
 		}
 	}
 
