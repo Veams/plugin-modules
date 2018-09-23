@@ -1,3 +1,8 @@
+[//]: # ({{#wrapWith "content-section"}})
+
+[//]: #     ({{#wrapWith "grid-row"}})
+[//]: #         ({{#wrapWith "grid-col" colClasses="is-col-mobile-l-8"}})
+
 # Veams Modules Plugin (`@veams/plugin-modules`)
 
 The Veams Modules Plugin provides a whole system to initialize, render, save and destroy your modules.
@@ -5,6 +10,8 @@ The Veams Modules Plugin provides a whole system to initialize, render, save and
 It uses mutation observer to observe added and removed nodes and handles your components, as long as the component has the same API like [VeamsComponent](https://github.com/Veams/component).
 
 TypeScript is supported. 
+
+---------------
 
 ## Installation
 
@@ -19,6 +26,8 @@ npm install @veams/plugin-modules --save
 ``` bash 
 yarn add @veams/plugin-modules
 ```
+
+---------------
 
 ## Usage
 
@@ -37,13 +46,15 @@ Veams.onInitialize(() => {
 
 ### Options
 
-- _attrPrefix_ {`String`} [`'data-js'`] - You can override the javascript module indicator in your markup which will be searched in the context.
-- _attrName_ {`String`} [`'module'`] - You can override the attribute name for module identification.
-- _attrOptions_ {`String`} [`'options'`] - You can override the attribute name for options identification.
-- _internalCacheOnly_ {`Boolean`} [`true`] - Hold internal cache in plugin and do not expose to the Veams object.
-- _internalRegisterOnly_ {`Boolean`} [`false`] - Hold internal register in plugin and do not expose to the Veams object.
-- _logs_ {`Boolean`} [`false`] - Hide or print the logs to the console.
-- _useMutationObserver_ {`Boolean`} [`true`] - You can set this option to true to use mutation observer for ajax handling. You can also use `Veams.EVENTS.DOMchanged` as before.
+| Option | Type | Default | Description |
+|:--- |:---:|:---:|:--- |
+| _attrPrefix_ | {`String`} | [`'data-js'`] | You can override the javascript module indicator in your markup which will be searched in the context. |
+| _attrName_ | {`String`} | [`'module'`] | You can override the attribute name for module identification. |
+| _attrOptions_ | {`String`} | [`'options'`] | You can override the attribute name for options identification. |
+| _internalCacheOnly_ | {`Boolean`} | [`true`] | Hold internal cache in plugin and do not expose to the Veams object. |
+| _internalRegisterOnly_ | {`Boolean`} | [`false`] | Hold internal register in plugin and do not expose to the Veams object. |
+| _logs_ | {`Boolean`} | [`false`] | Hide or print the logs to the console. |
+| _useMutationObserver_ | {`Boolean`} | [`true`] | You can set this option to true to use mutation observer for ajax handling. You can also use `Veams.EVENTS.DOMchanged` as before. |
 
 ### API
 
@@ -90,3 +101,9 @@ The plugin initializes your module and provides parameters to it:
     - `options` - Options object which is defined in the register process (also called default module options).
     - `context` - The context object is your custom Veams object.
 2. `options` - Markup Options which are read out by this plugin
+
+
+[//]: #         ({{/wrapWith}})
+[//]: #     ({{/wrapWith}})
+
+[//]: # ({{/wrapWith}})
